@@ -16,13 +16,13 @@ class TodoListViewController: UITableViewController{
     var item:Results<Item>?
     var selectedCategory:Category?{
         didSet{
-//           loadData()
+           loadData()
         }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        loadData()
+        loadData()
     }
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return item?.count ?? 1
@@ -43,9 +43,16 @@ class TodoListViewController: UITableViewController{
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        
-//        item[indexPath.row].done = !item[indexPath.row].done
-//        saveData()
+        if let i = item?[indexPath.row]{
+            do{
+                try realm.write{
+                    i.done = !i.done
+                }
+            }catch{
+                print("Error saving done status,\(error)")
+            }
+        }
+        tableView.reloadData()
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
@@ -80,11 +87,11 @@ class TodoListViewController: UITableViewController{
         
     }
     
-//    func loadData(){
-//        item = selectedCategory?.items.sorted(by: "title",ascending: true)
-//        tableView.reloadData()
-//    }
-//    
+    func loadData(){
+        item = selectedCategory?.items.sorted(byKeyPath: "title",ascending: true)
+        tableView.reloadData()
+    }
+    
 //    func saveData(){
 //        do{
 //            try context.save()
